@@ -1,0 +1,15 @@
+{
+  "name": "requestoride",
+  "version": "1.0.1",
+  "description": "wrapper of the request package",
+  "main": "requestoride.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ysegal",
+  "license": "ISC",
+
+  "dependencies": {
+      "request": "2.61.0"
+  }
+}
