@@ -1,6 +1,6 @@
 {
   "name": "requestoride",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "wrapper of the request package",
   "main": "requestoride.js",
   "scripts": {
@@ -8,6 +8,11 @@
   },
   "author": "ysegal",
   "license": "ISC",
+
+  "repository" : {
+       "type" : "git",
+       "url" : "https://bitbucket.org/YaronSegal/requestoride.git"
+  },
 
   "dependencies": {
       "request": "2.61.0"
