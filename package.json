@@ -1,7 +1,7 @@
 {
   "name": "requestoride",
-  "version": "1.0.2",
-  "description": "wrapper of the request package",
+  "version": "1.0.3",
+  "description": "A simple request module wrapper",
   "main": "requestoride.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,7 +11,7 @@
 
   "repository" : {
        "type" : "git",
-       "url" : "https://bitbucket.org/YaronSegal/requestoride.git"
+       "url" : "https://github.com/ysegalgit/requestoride.git"
   },
 
   "dependencies": {

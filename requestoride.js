@@ -1,195 +1,99 @@
 "use strict";
 
-var http    = require('http');		//https://www.npmjs.com/package/request
-var request = require('request');	//https://github.com/mikeal/request
+var request = require('request');
 
-exports.rejectSelfSignedSSL = true;
+module.exports = {
+		getRequest	: getRequest,
+		postRequest	: postRequest,
+		putRequest	: putRequest,
+		deleteRequest	: deleteRequest,
 
-exports.postRequest = function(myUrl, requestBody, headers, preserveCookie, onResult){
+		//helpers
+		getId			: getId,
+		hasHTTPErrors	: hasHTTPErrors
+}
+
+var baseRequest = request.defaults( {
+		headers				: { 'Content-Type': 'application/json' },
+		followAllRedirects 	: true,
+		jar 				: true	//use cookies in the subsequent requests (if redirected for example)
+} );
+
+var postRequests = baseRequest.defaults( {
+		method				: 'POST'
+} );
+
+var putRequests = baseRequest.defaults( {
+		method				: 'PUT',
+} );
+
+function getRequest(myUrl, myHeaders, preserveCookie, cookie, onResult){
 	var options = {
-			url					: myUrl,
-			headers				: { 'Content-Type': 'application/json' },
-			body				: requestBody,
-			followAllRedirects 	: true,
-			//jar 				: true	//use cookies in the subsequent requests (if redirected for example)
-			jar 				: preserveCookie	//use cookies in the subsequent requests (if redirected for example)
+			url 	: myUrl,
+			jar 	: preserveCookie,	//use cookies in the subsequent requests (if redirected for example)
+			//headers : myHeaders
 	}
 
-	if(headers){
-		//console.log("headers found." + headers);
-		options.headers = headers;
-		options.headers['Content-Type'] = 'application/json';
+	setHeaders(options, myHeaders);
+	setCooKie(options, cookie, myUrl);
+	return request(options, onResult);	//onResult from type 'function(error, response, body)'
+}
+
+function postRequest(myUrl, requestBody, myHeaders, preserveCookie, cookie, onResult){
+	var options = {
+			url		: myUrl,
+			body	: requestBody,
+			jar 	: preserveCookie	//use cookies in the subsequent requests (if redirected for example)
 	}
 
-	request.post(options, function (error, response, body){
+	setHeaders(options, myHeaders);
+   	setCooKie(options, cookie, myUrl);
+	return postRequests(options, onResult);	//onResult from type 'function(error, response, body)'
+}
 
+function putRequest (myUrl, requestBody, myHeaders, preserveCookie, cookie, onResult){
+	var options = {
+			url		: myUrl,
+			body	: requestBody,
+			jar 	: preserveCookie	//use cookies in the subsequent requests (if redirected for example)
+	}
+
+	setHeaders(options, myHeaders);
+	setCooKie(options, cookie, myUrl);
+	return putRequests(options, onResult);	//onResult from type 'function(error, response, body)'
+}
+
+function deleteRequest(myUrl, myHeaders, preserveCookie, cookie, onResult){
+	var options = {
+			url 	: myUrl,
+			jar 	: preserveCookie	//use cookies in the subsequent requests (if redirected for example)
+	}
+
+	setHeaders(options, myHeaders);
+	setCooKie(options, cookie, myUrl);
+	return request.del(options, onResult); //onResult from type 'function(error, response, body)'
+}
+
+function setHeaders(options, theHeaders){
+	if(theHeaders)
+	   options.headers = theHeaders;
+}
+
+function setCooKie(options, theCookie, theUrl){
+	if(cookie){
 		var j = request.jar();
-		var cookie_string = j.getCookieString(myUrl);
-		var cookies = j.getCookies(myUrl);
-		//console.log(myUrl);
-		//console.log("Headers:" + JSON.stringify(response.headers));
-		//console.log("Header:" + JSON.stringify(response.headers['set-cookie']));
-		//console.log("Cookie:" + cookie_string);
-
-		onResult(error, response, body); //simple wrapper
-	});
-}
-
-exports.postRequestWithCookie = function(myUrl, requestBody, theCookie, onResult){
-
-	var j = request.jar();
-	var cookie = request.cookie(theCookie);
-	j.setCookie(cookie, myUrl);
-
-	var requestWithCookie = request.defaults({jar: j});
-
-	var options = {
-			url: myUrl,
-			body: requestBody,
-			headers: { 'Content-Type': 'application/json' },
-			rejectUnauthorized : this.rejectSelfSignedSSL
-			//jar : j
-	};
-
-	requestWithCookie.post(options, function (error, response, body) {
-		onResult(error, response, body)	//simple wrapper
-	})
-}
-
-exports.putRequest = function(myUrl, requestBody, headers, preserveCookie, onResult){
-	var options = {
-			url					: myUrl,
-			headers				: { 'Content-Type': 'application/json' },
-			body				: requestBody,
-			followAllRedirects 	: true,
-			//jar 				: true	//use cookies in the subsequent requests (if redirected for example)
-			jar 				: preserveCookie	//use cookies in the subsequent requests (if redirected for example)
+		var cookie = request.cookie(theCookie);
+		j.setCookie(cookie, theUrl);
+		options.jar = j;
 	}
-
-	if(headers){
-		//console.log("headers found." + headers);
-		options.headers = headers;
-		options.headers['Content-Type'] = 'application/json';
-	}
-
-	//look at http://nodejs.org/api/http.html (search for 'options')
-
-	request.put(options, function (error, response, body){
-
-		var j = request.jar();
-		var cookie_string = j.getCookieString(myUrl);
-		var cookies = j.getCookies(myUrl);
-
-		onResult(error, response, body); //simple wrapper
-	});
 }
 
-exports.putRequestWithCookie = function(myUrl, requestBody, theCookie, onResult){
-
-	var j = request.jar();
-	var cookie = request.cookie(theCookie);
-	j.setCookie(cookie, myUrl);
-
-	var requestWithCookie = request.defaults({jar: j});
-
-	var options = {
-			url: myUrl,
-			body: requestBody,
-			headers: { 'Content-Type': 'application/json' },
-			rejectUnauthorized : this.rejectSelfSignedSSL
-			//jar : j
-	};
-
-	requestWithCookie.put(options, function (error, response, body) {
-		onResult(error, response, body)	//simple wrapper
-	})
-}
-
-exports.getRequest = function(myUrl, headers, preserveCookie, onResult){
-
-	var options = {
-			url 				: myUrl,
-			headers 			: { 'Content-Type': 'application/json' },
-			rejectUnauthorized 	: this.rejectSelfSignedSSL,
-			jar 				: preserveCookie	//use cookies in the subsequent requests (if redirected for example)
-	}
-
-	if(headers){
-		options.headers = headers;
-		options.headers['Content-Type'] = 'application/json';
-	}
-
-	request(options, function (error, response, body) {
-		onResult(error, response, body)	//simple wrapper
-	})
-}
-
-exports.getRequestWithCookie = function(myUrl, theCookie, onResult){
-
-	var j = request.jar();
-	var cookie = request.cookie(theCookie);
-	j.setCookie(cookie, myUrl);
-
-	var requestWithCookie = request.defaults({jar: j});
-
-	var options = {
-			url: myUrl,
-			headers: { 'Content-Type': 'application/json' },
-			rejectUnauthorized : this.rejectSelfSignedSSL
-			//jar : j
-	};
-
-	requestWithCookie.get(options, function (error, response, body) {
-		onResult(error, response, body)	//simple wrapper
-	})
-}
-
-exports.deleteRequest = function(myUrl, headers, preserveCookie, onResult){
-
-	var options = {
-			url 				: myUrl,
-			headers 			: { 'Content-Type': 'application/json' },
-			rejectUnauthorized 	: this.rejectSelfSignedSSL,
-			jar 				: preserveCookie	//use cookies in the subsequent requests (if redirected for example)
-	}
-
-	if(headers){
-		options.headers = headers;
-		options.headers['Content-Type'] = 'application/json';
-	}
-
-	request.del(options, function (error, response, body){
-		onResult(error, response, body)	//simple wrapper
-	});
-}
-
-exports.deleteRequestWithCookie = function(myUrl, theCookie, onResult){
-
-	var j = request.jar();
-	var cookie = request.cookie(theCookie);
-	j.setCookie(cookie, myUrl);
-
-	var requestWithCookie = request.defaults({jar: j});
-
-
-	var options = {
-			url: myUrl,
-			headers: { 'Content-Type': 'application/json' },
-			rejectUnauthorized : this.rejectSelfSignedSSL
-			//jar : j
-	};
-
-	requestWithCookie.delete(options, function (error, response, body) {
-		onResult(error, response, body)	//simple wrapper
-	})
-}
-
-exports.getId = function(response){
+function getId(response){
 	return (response.statusCode == 201) ?
 		response.headers.location.substr(response.headers.location.lastIndexOf('/') + 1) : null;
 }
 
-exports.hasHTTPErrors = function(response){
+function hasHTTPErrors(response){
 	if(response && typeof response.statusCode == 'number')
 		return response.statusCode < 400 ? false : true;
 	else
