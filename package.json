@@ -1,6 +1,6 @@
 {
   "name": "requestoride",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A simple request module wrapper",
   "main": "requestoride.js",
   "scripts": {
@@ -8,13 +8,14 @@
   },
   "author": "ysegal",
   "license": "ISC",
-
-  "repository" : {
-       "type" : "git",
-       "url" : "https://github.com/ysegalgit/requestoride.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ysegalgit/requestoride.git"
   },
-
   "dependencies": {
-      "request": "2.61.0"
+    "request": "2.61.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.12.2"
   }
 }
