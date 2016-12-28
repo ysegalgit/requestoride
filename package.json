@@ -1,11 +1,18 @@
 {
   "name": "requestoride",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A simple request module wrapper",
   "main": "requestoride.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eslint": "node_modules/.bin/eslint ./",
+    "lint": "eslint ./",
+    "precommit-msg": "echo 'Pre-commit checks...' && exit 0"
   },
+  "pre-commit": [
+    "precommit-msg",
+    "lint"
+  ],
   "author": "ysegal",
   "license": "ISC",
   "repository": {
@@ -16,6 +23,7 @@
     "request": "2.61.0"
   },
   "devDependencies": {
-    "eslint": "^3.12.2"
+    "eslint": "^3.12.2",
+    "pre-commit": "^1.2.2"
   }
 }

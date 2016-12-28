@@ -1,15 +1,7 @@
 module.exports = {
-    "env": {
-        "node": true
-    },
 
-    "extends": "eslint:recommended",
+    "extends": ["eslint:recommended" , "eslint-config-node-alegra"],
     "rules": {
-        "linebreak-style" : "off",
-        "semi": ["error", "always"],
-        "quotes": "off",
-        "indent": ["error", "tab"],
-        "no-unused-vars": ["error", { "varsIgnorePattern": "cl" }],
-        "no-console" : "off"
     }
+
 };
