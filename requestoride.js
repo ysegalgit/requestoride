@@ -8,7 +8,7 @@ module.exports = {
 	putRequest	: putRequest,
 	deleteRequest	: deleteRequest,
 
-		//helpers
+	//helpers
 	getId			: getId,
 	hasHTTPErrors	: hasHTTPErrors
 };
@@ -95,7 +95,7 @@ function getId(response){
 
 function hasHTTPErrors(response){
 	if(response && typeof response.statusCode == 'number')
-		return response.statusCode < 400 ? false : true;
-	else
-		return true;
+		return response.statusCode >= 400;
+
+	return true;
 }
